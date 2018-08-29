@@ -1,39 +1,65 @@
-// Learn cc.Class:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
-        // },
+        bg : {
+            type:cc.Sprite,
+            default:null
+        },
+        joystickPrefab:
+        {
+            type:cc.Prefab,
+            default:null
+        }
     },
 
     // LIFE-CYCLE CALLBACKS:
+    _initJoyStick:function(){
+        this.joyStick = cc.instantiate(this.joystickPrefab);
+        this.joyStick.parent = this.node;
+        this.joyStick.x = 0;
+        this.joyStick.y = 0;
+        this.joyStick.active = false;
+    },
+    _initTouchEvent:function() {
+        var self = this;
+        self.node.on(cc.Node.EventType.TOUCH_START, function (event) {
+                self._touchStartEvent(event);
+        });
+        self.node.on(cc.Node.EventType.TOUCH_MOVE, function (event) {
+                self._touchMoveEvent(event);
+        });
+        self.node.on(cc.Node.EventType.TOUCH_CANCEL, function (event) {
+                self._touchEndEvent(event);
+        });
+        self.node.on(cc.Node.EventType.TOUCH_END, function (event) {
+                self._touchEndEvent(event);
+        });
+    },
+    _touchStartEvent:function(event) {
+        var pt = event.getLocation();
+		var pos = this.node.convertToNodeSpaceAR(pt); 
+		this.joyStick.setPosition(pos);
+		this.joyStick.active = true;
+		this.joyStick.getComponent("JoyStick").moveStart();
+    },
+    _touchMoveEvent:function(event) {
+        var pt = event.getLocation();
+		var pos2 = this.joyStick.convertToNodeSpaceAR(pt); 
+		this.joyStick.getComponent("JoyStick").setInPos(pos2);
+    },
+    _touchEndEvent:function(event) {
+        this.joyStick.getComponent("JoyStick").moveEnd();
+        this.joyStick.active = false;
+    },
 
-    // onLoad () {},
+    onLoad:function () {
+        this._initJoyStick();  
+        this._initTouchEvent();
+    },
 
-    start () {
+    start:function () {
 
     },
 
