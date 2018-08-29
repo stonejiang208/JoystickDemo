@@ -348,6 +348,9 @@
     },
     "joystickPrefab": {
       "__uuid__": "dd637b43-a1ba-43a8-bff7-f54dc9c3ed26"
+    },
+    "testInfo": {
+      "__id__": 7
     }
   }
 ]

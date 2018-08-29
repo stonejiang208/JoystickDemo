@@ -11,6 +11,10 @@ cc.Class({
         {
             type:cc.Prefab,
             default:null
+        },
+        testInfo:{
+            type: cc.Label,
+            default: null 
         }
     },
 
@@ -21,6 +25,7 @@ cc.Class({
         this.joyStick.x = 0;
         this.joyStick.y = 0;
         this.joyStick.active = false;
+        this.joyStick.getComponent("JoyStick").game = this;
     },
     _initTouchEvent:function() {
         var self = this;
@@ -62,6 +67,12 @@ cc.Class({
     start:function () {
 
     },
+
+    onJoyStick:function(event){
+        cc.log("event ", JSON.stringify(event));
+
+        this.testInfo.string  = JSON.stringify(event);
+    }
 
     // update (dt) {},
 });
